@@ -1,11 +1,12 @@
 import traceback
 import logging
+import utils
+import names
 from rest_framework import exceptions
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from chat.models import Message
 from chat.serializers import MessageSerializer
-from chat import utils
 from chat.permissions import JWTAuthentication
 
 class MessageAPIView(APIView):
@@ -22,21 +23,32 @@ class MessageAPIView(APIView):
 
   def post(self, request):
     try:
+      response = Response()
+
       ip_addr = utils.get_ip_address(request)
       if not ip_addr: return Response("Unable to get the ip_address", 400)
 
       is_toxic = utils.check_toxicity(request.data["content"])
       if is_toxic: return Response("Toxicity Not Allowed", 400)
 
+      name = request.COOKIES.get("name")
+      if not name:
+        name = names.get_first_name()
+        response.set_cookie("name", name, httponly=True)
+      
+      request.data["name"] = name
       request.data["source"] = ip_addr
+
       serializer = MessageSerializer(data=request.data)
       serializer.is_valid(raise_exception=True)
       serializer.save()
+
     except Exception as e:
       logging.error(traceback.format_exc())
       return Response({ "error": str(e) }, 400)
-    
-    return Response(serializer.data, 201)
+
+    response.status_code = 201
+    return response
 
   def delete(self, request):
     try:
