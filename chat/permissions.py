@@ -1,11 +1,9 @@
 import jwt
 import datetime
 from rest_framework import exceptions
-from rest_framework.authentication import BaseAuthentication
 from message_board.settings import SECRET_KEY
 
-
-class JWTAuthentication(BaseAuthentication):
+class JWTAuthentication():
 
   @staticmethod
   def authenticate(request):
