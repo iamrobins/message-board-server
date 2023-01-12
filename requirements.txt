@@ -4,3 +4,4 @@ djangorestframework==3.14.0
 torch==1.13.1
 detoxify==0.5.1
 pyjwt==2.6.0
+names==0.3.0
