@@ -9,7 +9,7 @@ class JWTAuthentication(BaseAuthentication):
 
   @staticmethod
   def authenticate(request):
-      token = request.COOKIES.get("secret")
+      token = request.data["secret"]
 
       if not token:
         return None
