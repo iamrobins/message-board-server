@@ -34,7 +34,7 @@ class MessageAPIView(APIView):
       serializer.save()
     except Exception as e:
       logging.error(traceback.format_exc())
-      return Response(str(e), 400)
+      return Response({ "error": str(e) }, 400)
     
     return Response(serializer.data, 201)
 
@@ -47,24 +47,28 @@ class MessageAPIView(APIView):
 
       if not id:
         messages = Message.objects.all().delete()
-        return Response("All messages successfully deleted", 204)
+        return Response({"success": "All messages successfully deleted"}, 204)
       else:
         message = Message.objects.filter(id=id)
         if not message:
           raise Exception("Message not found")
         message.delete()
-        return Response("Message successfully deleted", 204)
+        return Response({"success": "Message successfully deleted"}, 204)
       
     except Exception as e:
       logging.error(traceback.format_exc())
-      return Response(str(e), 400)
+      return Response({ "error": str(e) }, 400)
 
 class AdminAcessAPIView(APIView):
   def get(self, request):
-    token = JWTAuthentication.generate_jwt(scope="admin")
-    response = Response()
+    try:
+      token = JWTAuthentication.generate_jwt(scope="admin")
+      response = Response()
 
-    response.set_cookie("secret", token, httponly=True)
-    response.data = {"token": token}
+      response.set_cookie("secret", token, httponly=True)
+      response.data = {"token": token}
 
-    return response
+      return response
+    except Exception as e:
+      logging.error(traceback.format_exc())
+      return Response({ "error": str(e) }, 400)
