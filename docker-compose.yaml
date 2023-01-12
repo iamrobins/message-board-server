@@ -1,0 +1,11 @@
+version: "3.3"
+   
+services:
+    message-board:
+        build: .
+        container_name: message-board
+        command: bash backend.sh
+        volumes:
+            - .:/message-board/
+        ports:
+            - "8000:8000"
