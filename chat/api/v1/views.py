@@ -44,15 +44,20 @@ class MessageAPIView(APIView):
       if payload["scope"] != "admin": raise Exception("Only admins are allowed to perform this action")
       
       id = request.query_params.get("id")
-      message = Message.objects.filter(id=id)
-      if not message:
-        raise Exception("Message not found")
-      message.delete()
+
+      if not id:
+        messages = Message.objects.all().delete()
+        return Response("All messages successfully deleted", 204)
+      else:
+        message = Message.objects.filter(id=id)
+        if not message:
+          raise Exception("Message not found")
+        message.delete()
+        return Response("Message successfully deleted", 204)
       
     except Exception as e:
       logging.error(traceback.format_exc())
       return Response(str(e), 400)
-    return Response("Message successfully deleted", 204)
 
 class AdminAcessAPIView(APIView):
   def get(self, request):
