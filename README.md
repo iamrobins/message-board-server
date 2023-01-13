@@ -1,6 +1,7 @@
 ## Setup
 1. Install Docker and Docker Compose
 2. Open terminal and run docker compose up --build or (docker-compose up --build)
+3. python manage.py test (There are 6 tests)
 
 ## Current Design
 <img src="https://i.postimg.cc/kMRZPPwT/Monolith-Design-drawio.png" alt="diagram" />
